@@ -2,11 +2,13 @@
 __author__ = 'robertobernabe'
 
 from HTMLParser import HTMLParser
+import argparse
 import re
 import os
 import urllib2
 import tempfile
 import logging
+import sys
 
 from mixcloud_api import MixCloudApi
 
@@ -57,9 +59,14 @@ class MixCloud(object):
 
     def __init__(self, url):
         self.mixCloudUrl = MixCloudUrl(url)
+        self.mixCloudApi = MixCloudApi(url)
         self.title = None
         self.previewUrl = None
         self._htmlContentFilePath = None
+
+    @property
+    def cloudCastFileName(self):
+        return self.title.lower().replace(' ', '_')
 
     @property
     def htmlContentFilePath(self):
@@ -77,18 +84,37 @@ class MixCloud(object):
         urls = self.generate_download_urls()
         return self.find_valid_download_url(urls)
 
+    def _download(self, url, fileName):
+        fileSizeDownloaded = 0
+        with open(fileName, mode="wb") as fileDownload:
+            ret = urllib2.urlopen(url)
+            meta = ret.info()
+            fileSize = int(meta.getheaders("Content-Length")[0])
+            print "Downloading: %s" % (fileName)
+            while True:
+                data = ret.read(1024)
+                fileSizeDownloaded += len(data)
+                sys.stdout.write("\r%s of %s KBytes" % ((fileSizeDownloaded / 1024), (fileSize / 1024)))
+                sys.stdout.flush()
+                if not data:
+                    break
+                fileDownload.write(data)
+        sys.stdout.write("\n")
+
     def download(self):
         self._download_website_content()
         self._parse_html_content_file()
+        self.download_cloudcast_cover()
+        self.download_cloudcast_mp3()
+
+    def download_cloudcast_mp3(self):
         urls = self.generate_download_urls()
         downloadUrl = self.find_valid_download_url(urls)
-        with open("%s.mp3" % self.title, mode="wb") as mp3:
-            ret = urllib2.urlopen(downloadUrl)
-            while True:
-                data = ret.read(1024)
-                if not data:
-                    break
-                mp3.write(data)
+        fileName = "%s.mp3" % self.cloudCastFileName
+        self._download(downloadUrl, fileName)
+
+    def download_cloudcast_cover(self):
+        self._download(self.mixCloudApi.picture_url, '%s.jpg' % self.cloudCastFileName)
 
     def _download_website_content(self):
         log.info("trying to get web content for %s" % self.mixCloudUrl.url)
@@ -129,5 +155,7 @@ class MixCloud(object):
 if __name__ == '__main__':
     url = "http://www.mixcloud.com/weedska/vilnius-tropical-1-kizomba/"
     mixCloud = MixCloud(url)
-    print mixCloud.get_download_url()
+    print mixCloud.mixCloudApi.description
+    print mixCloud.mixCloudApi.get_tracklist_printout()
+    mixCloud.download()
 
