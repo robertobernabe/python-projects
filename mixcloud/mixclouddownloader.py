@@ -8,7 +8,7 @@ import urllib2
 import tempfile
 import logging
 
-
+from mixcloud_api import MixCloudApi
 
 log = logging.getLogger(__name__)
 
