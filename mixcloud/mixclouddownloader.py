@@ -114,10 +114,14 @@ class MixCloud(object):
         downloadUrl = self.find_valid_download_url(urls)
         fileName = "%s.mp3" % self.cloudCastFileName
         self._download(downloadUrl, fileName)
+        self.cloudCastFileNamePath = os.path.abspath(fileName)
 
     def download_cloudcast_cover(self):
         self._download(
             self.mixCloudApi.picture_url, '%s.jpg' % self.cloudCastFileName)
+
+    def set_mp3_tags(self):
+        pass
 
     def _download_website_content(self):
         log.info("trying to get web content for %s" % self.mixCloudUrl.url)
@@ -158,7 +162,15 @@ class MixCloud(object):
                 pass
 
 if __name__ == '__main__':
-    url = "http://www.mixcloud.com/weedska/vilnius-tropical-1-kizomba/"
+
+    parser = argparse.ArgumentParser("mixclouddownloader")
+    parser.add_argument(
+        "cloudcastUrl", action="store",
+        help="cloudcast http url http://www.mixcloud.com/...")
+    parsedArgs = parser.parse_args()
+
+    url = parsedArgs.cloudcastUrl
+
     mixCloud = MixCloud(url)
     print mixCloud.mixCloudApi.description
     print mixCloud.mixCloudApi.get_tracklist_printout()
