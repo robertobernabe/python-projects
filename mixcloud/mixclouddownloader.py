@@ -14,6 +14,7 @@ from mixcloud_api import MixCloudApi
 
 log = logging.getLogger(__name__)
 
+
 class MixCloudHtmlParser(HTMLParser):
     def __init__(self, uriCondition):
         HTMLParser.__init__(self)
@@ -37,7 +38,6 @@ class MixCloudHtmlParser(HTMLParser):
             if 'data-url' and 'data-preview-url' in _.keys():
                 if _['data-url'] == self.uriCondition:
                     self.previewUrl = _['data-preview-url']
-
 
 
 class MixCloudUrl(object):
@@ -94,7 +94,9 @@ class MixCloud(object):
             while True:
                 data = ret.read(1024)
                 fileSizeDownloaded += len(data)
-                sys.stdout.write("\r%s of %s KBytes" % ((fileSizeDownloaded / 1024), (fileSize / 1024)))
+                sys.stdout.write(
+                    "\r%s of %s KBytes" % (
+                        (fileSizeDownloaded / 1024), (fileSize / 1024)))
                 sys.stdout.flush()
                 if not data:
                     break
@@ -114,7 +116,8 @@ class MixCloud(object):
         self._download(downloadUrl, fileName)
 
     def download_cloudcast_cover(self):
-        self._download(self.mixCloudApi.picture_url, '%s.jpg' % self.cloudCastFileName)
+        self._download(
+            self.mixCloudApi.picture_url, '%s.jpg' % self.cloudCastFileName)
 
     def _download_website_content(self):
         log.info("trying to get web content for %s" % self.mixCloudUrl.url)
@@ -135,11 +138,13 @@ class MixCloud(object):
         self.previewUrl = parser.previewUrl
 
     def generate_download_urls(self):
-        baseUrl = self.previewUrl.replace('/previews/', '/cloudcasts/originals/')
+        baseUrl = self.previewUrl.replace(
+            '/previews/', '/cloudcasts/originals/')
         match = self.URL_REGEX_PATTERN.match(self.previewUrl)
         downloadUrls = []
         for _ in xrange(1, 100):
-            downloadUrl = baseUrl.replace(baseUrl[0:match.span()[1]], 'http://stream%s' % _)
+            downloadUrl = baseUrl.replace(
+                baseUrl[0:match.span()[1]], 'http://stream%s' % _)
             downloadUrls.append(downloadUrl)
         return downloadUrls
 
@@ -158,4 +163,3 @@ if __name__ == '__main__':
     print mixCloud.mixCloudApi.description
     print mixCloud.mixCloudApi.get_tracklist_printout()
     mixCloud.download()
-
