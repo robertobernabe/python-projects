@@ -90,7 +90,7 @@ class MixCloud(object):
             ret = urllib2.urlopen(url)
             meta = ret.info()
             fileSize = int(meta.getheaders("Content-Length")[0])
-            print "Downloading: %s" % (fileName)
+            print "Downloading: %s to %s" % (url, fileName)
             while True:
                 data = ret.read(1024)
                 fileSizeDownloaded += len(data)
