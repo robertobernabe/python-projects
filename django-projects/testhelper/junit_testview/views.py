@@ -1,11 +1,18 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from django.template import loader
+from .models import TestRun
 # Create your views here.
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the junit-testview index.")
+    testruns = TestRun.objects.order_by('-time')[:5]
+    template = loader.get_template('testruns.html')
+    context = {
+        'testruns': testruns,
+    }
+
+    return HttpResponse(template.render(context, request))
 
 
 def testrun(request, testrun_id):
