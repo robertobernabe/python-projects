@@ -1,12 +1,13 @@
 import os
-import glob
+import fnmatch
 import logging
 import pathlib
 
 log = logging.getLogger()
 
 
-def find(dirPathToSearch, pattern):
+
+def find_files(directory, pattern):
     """Searching for pattern in specific directory.
     Returns an list with found files and directories according to
     given pattern.
@@ -14,17 +15,20 @@ def find(dirPathToSearch, pattern):
     :param dirPathToSearch:
     :param pattern: No tilde expansion is done, but *, ?, and
     character ranges expressed with [] will be correctly matched.
-    :return: list of filepaths
+    :return: yields a file path
     """
-    p = os.path.join(dirPathToSearch, pattern)
-    log.info("Searching for %s", p)
-    _ = glob.glob(p)
-    log.info("Found %s items with the pattern %s in %s:\n%s",
-             len(_), pattern, dirPathToSearch, "\n".join(_))
-    return _
-
+    directory = str(directory)
+    log.info("Searching for %s in %s", pattern, directory)
+    for root, dirs, files in os.walk(directory):
+        for basename in files:
+            if fnmatch.fnmatch(basename, pattern):
+                filePath = os.path.join(root, basename)
+                log.info("found %s", filePath)
+                yield filePath
 
 
 if __name__ == '__main__':
     from junit_report_creator import log
-    find("/home/robertobernabe/", "**/*")
+
+    for filename in find_files('/tmp/pytest-of-robertobernabe/pytest-26/test_find0', '*.xml'):
+        pass
