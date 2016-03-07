@@ -1,4 +1,4 @@
-__author__ = 'robertobernabe'
+import argparse
 import logging
 
 
@@ -9,3 +9,9 @@ if not log.handlers:
     import sys
     log.addHandler(logging.StreamHandler(stream=sys.stdout))
     log.setLevel(logging.INFO)
+
+
+
+
+if __name__ == '__main__':
+    main()

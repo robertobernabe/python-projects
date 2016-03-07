@@ -67,7 +67,6 @@ testsuites = element testsuites {
 }
 """
 import math
-import unittest
 from datetime import timedelta
 from xml.etree import ElementTree
 import logging
@@ -87,10 +86,6 @@ def to_timedelta(val):
     return timedelta(seconds=secs)
 
 
-class TestResult(unittest.TestResult):
-    def _exc_info_to_string(self, err, test):
-        err = (e for e in err if e)
-        return ': '.join(err)
 
 
 class TestCase(object):
@@ -112,7 +107,15 @@ class TestCase(object):
         self.error = None
 
     def __str__(self):
-        return "%s (%s)" % (self.classname, self.name)
+        result = ""
+        if self.failure:
+            result = "FAILED"
+        if self.skipped:
+            result = "SKIPPED"
+        if self.error:
+            result = "ERROR"
+
+        return "%s %s" % (self.name, result)
 
 
 
@@ -256,7 +259,7 @@ def parse(source):
 
 
 if __name__ == '__main__':
-    testsuites = parse("../report.xml")
+    testsuites = parse("junit4_jenkins.xsd.xml")
     for testsuite in testsuites:
         for tc in testsuite.testcase:
             print(tc)

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<testsuites>
+  <!--Zero or more repetitions:-->
+  <testsuite name="testsuite_name" timestamp="2008-09-29T03:49:45" hostname="testhostname" tests="3" failures="3" errors="3" time="1000.00" package="token" id="3">
+    <properties>
+      <!--Zero or more repetitions:-->
+      <property name="property_name" value="property_value"/>
+    </properties>
+    <!--Zero or more repetitions:-->
+    <testcase name="testcase_name" classname="testcase_classname" time="1000.00">
+      <!--You have a CHOICE of the next 2 items at this level-->
+      <error message="this is an error message" type="error">This is an extendend error message</error>
+      <failure message="this is an failure message" type="failure">This is an extendend failure message</failure>
+    </testcase>
+    <system-out>Some strange std ouput</system-out>
+    <system-err>Some stderr ouput</system-err>
+  </testsuite>
+
+</testsuites>
