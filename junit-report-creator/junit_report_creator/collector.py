@@ -1,7 +1,7 @@
 import os
 import fnmatch
 import logging
-import pathlib
+from py._path.local import LocalPath
 
 log = logging.getLogger()
 
@@ -24,11 +24,11 @@ def find_files(directory, pattern):
             if fnmatch.fnmatch(basename, pattern):
                 filePath = os.path.join(root, basename)
                 log.info("found %s", filePath)
-                yield filePath
+                yield LocalPath(filePath)
 
 
 if __name__ == '__main__':
     from junit_report_creator import log
 
-    for filename in find_files('/tmp/pytest-of-robertobernabe/pytest-26/test_find0', '*.xml'):
-        pass
+    for filePath in find_files('/tmp/pytest-of-robertobernabe/', '*.xml'):
+        assert filePath.isfile()
