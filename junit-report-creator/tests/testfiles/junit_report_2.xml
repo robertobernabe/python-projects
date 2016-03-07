@@ -12,6 +12,10 @@
       <error message="this is an error message" type="error">This is an extendend error message</error>
       <failure message="this is an failure message" type="failure">This is an extendend failure message</failure>
     </testcase>
+    <testcase  name="this is a skipped tests" classname="testcase_classname_skipped" time="0">
+         <skipped />
+    </testcase>
+
     <system-out>Some strange std ouput</system-out>
     <system-err>Some stderr ouput</system-err>
   </testsuite>
