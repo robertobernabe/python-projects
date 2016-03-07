@@ -126,13 +126,18 @@ class TestCase(unittest.TestCase):
         return '\n'.join([out for out in (self.stdout, self.stderr) if out])
 
 
-class TestSuite(unittest.TestSuite):
+class TestSuite(object):
     def __init__(self, *args, **kwargs):
-        super(TestSuite, self).__init__(*args, **kwargs)
         self.properties = {}
         self.stdout = None
         self.stderr = None
+        self._tests = []
 
+    def addTest(self, test):
+        self._tests.append(test)
+
+    def run(self, a):
+        pass
 
 class Parser(object):
     TC_CLASS = TestCase
@@ -225,4 +230,5 @@ def parse(source):
 
 
 if __name__ == '__main__':
-    parse("../report.xml")
+    t, tt = parse("../report.xml")
+    print(t, tt)
